@@ -1,4 +1,9 @@
 ﻿
+read uncommitted – jedna transakcja może odczytywać wiersze, na których działają inne transakcje (najniższy poziom izolacji)
+read committed – transakcja może odczytywać tylko wiersze zapisane
+repeatable read – transakcja nie może czytać ani zapisywać na wierszach odczytywanych lub zapisywanych w innej transakcji
+serializable (szeregowalne) – wyniki współbieżnie realizowanych zapytań muszą być identyczne z wynikami tych samych zapytań realizowanych szeregowo (pełna izolacja).
+
 Brudny odczyt
 (ang.Dirty read /
 Uncommitted
