@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace GOF
@@ -11,15 +12,24 @@ namespace GOF
         string xx { get; set; }
     }
 
-    class MyStruct2
+    public abstract class MyStruct2
     {
         protected string xx { get; set; }
+
+        public virtual void DoWork() {/*...*/ }
+
+        public abstract void DoWork2();
     }
 
-    class  DDD : MyStruct2
+    public class  DDD : MyStruct2
     {
-        
+        public override void DoWork2()
+        { 
+            var test = this.xx;
+            throw new NotImplementedException();
+        }
     }
+
     class Program
     {
         static void Main(string[] args)
@@ -58,6 +68,8 @@ namespace GOF
             };
 
            var result =  dic.GroupBy(el => el.Key);
+
+
         }
     }
 }

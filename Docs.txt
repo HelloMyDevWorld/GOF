@@ -1,0 +1,98 @@
+﻿
+Brudny odczyt
+(ang.Dirty read /
+Uncommitted
+dependency
+Występuje, gdy transakcja odczytuje dane, które nie zostały jeszcze zatwierdzone
+(COMMIT).Jeśli inne transakcja ostatecznie wycofa zmiany(ROLLBACK) wtedy pierwsza
+transakcja może odczytać zmiany, które nigdy nie istniały.
+
+Utracona
+modyfikacja
+(ang.Lost update)
+Występuje, gdy więcej niż jedna transakcja czyta te same dane.Modyfikacje , które
+zostaną zrobione później przez pierwszą transakcję zostaną nadpisane prze inną
+transakcję nieświadomą zmian, które nastąpiły.
+
+Niepowtarzalny
+odczyt
+(ang.Nonrepeatable read /
+Inconsistent
+Analysis)
+Występuje, gdy transakcja odczytuje dwa razy ten sam wiersz, ale dostaje inne dane za
+każdym razem. Przykład: transakcja 1 czyta wiersz. Transakcja 2 modyfikuje lub usuwa
+ten wiersz oraz zostaje zakończona(COMMIT). Jeśli transakcja 1 odczyta teraz ten wiersz
+to dostanie inne dane lub odkryje, że wiersz już nie istnieje.
+
+Fantomy
+(ang.Phantoms)
+Fantom to wiersz, który spełnia kryteria wyszukiwania, ale nie jest widoczny na początku.
+Przykład: transakcja 1 czyta zbiór wierszy, który spełnia kryteria wyszukiwania. Transakcja
+2 dodaje wiersz, który spełnia kryteria wyszukiwania transakcji 1.Jeśli transakcja 1
+ponownie wykona to samo wyszukiwanie dostanie inny zbiór rekordów.
+
+ACID - atomicity, consistency, isolation, durability, czyli niepodzielność[a], spójność, izolacja, trwałość[1].
+
+algorytmy szyfrujace 
+RSA, DSA - asymetryczne  AES, DES - symetryczne
+MD5, SHA256 SHA512
+
+ataki www - SQL Injection, XSS, XSRF, DDoS
+-DDOS - zwiekszenie obciazenia do upadku serwera
+SQL INjection - wstrrzykiwanie kommend przez input na stronie do bazy danych
+-Cross-site scripting (XSS) – sposób ataku na serwis WWW polegający na osadzeniu w treści atakowanej strony kodu (zazwyczaj JavaScript), który wyświetlony innym użytkownikom może doprowadzić do wykonania przez nich niepożądanych akcji.
+wsryzkniety do bazy danych skrypt ktory odpali sie na stronie jak uzotkownik na nia wejdzie
+-Cross-site request forgery (w skrócie CSRF lub XSRF) - Atak ma na celu skłonić użytkownika zalogowanego do serwisu internetowego do tego, aby uruchomił on odnośnik, którego otwarcie wykona w owym serwisie akcję,
+
+cookies
+wzorce
+string jest typem referncyjnym
+operacje na bazie danych read commited itd
+entity framewwork jest transakcyjny
+
+https://mega.nz/#F!PwsnBLBL!waJb3lHFiR9444GFpuokIg
+https://goalkicker.com/
+
+https://sqlchris.wordpress.com/2017/06/25/poziomy-izolacji-transakcji-sql-server/
+https://rklopotek.blog.uksw.edu.pl/files/2017/02/Bazy_danych_wyk%C5%82ad_6_draft.pdf
+https://docs.microsoft.com/pl-pl/dotnet/csharp/programming-guide/classes-and-structs/polymorphism
+
+Acid solid sql w w3schools wzorce projektowe
+
+polimorfizmu, dziedziczeniai hermetyzacjiw
+
+
+Liskov substitution principle (Zasada podstawienia Liskov)
+Funkcje które używają wskaźników lub referencji do klas bazowych, muszą być w stanie używać również obiektów klas dziedziczących po klasach bazowych, bez dokładnej znajomości tych obiektów.
+
+
+Methods factory odnosi się do tworzenia obiektów z tej samej rodziny bez pokazywania implementacji która może być tworzona w różny sposób
+
+Abstract factory pozwala na tworzenia skomplikowanych obiektów i powiązań między nimi
+
+
+Stack vs heap
+Iquerable vs ienumberable 
+Enumarable implementuje i zesrać enumerator
+  
+Sesia na serwerze a cookies na cliencie https://www.tutorialspoint.com/What-is-the-difference-between-session-and-cookies
+
+
+DES - jeden z najpopularniejszych symetrycznych algorytmów szyfrujących, używany między innymi przez rząd USA do szyfrowania ważnych wiadomości
+RSA - najpopularniejszy algorytm z kluczem publicznym oparty na liczbach pierwszych. Stosuje się go do szyfrowania oraz do podpisów cyfrowych
+DSA - algorytm szyfrujący wykorzystywany do podpisów cyfrowych
+MD5 - algorytm szyfrujący w jedną stronę - takiej wiadomości nie można odszyfrować, stosowany np. do szyfrowania haseł użytkowników. Zaszyfrowane hasło jest przechowywane w bazie. Weryfikacja użytkownika polega na zaszyfrowaniu podanego hasła i porównaniu go z hasłem przechowywanym w bazie
+SHA128 512
+
+Ienumberable vs enumerator 
+https://www.c-sharpcorner.com/UploadFile/219d4d/ienumerable-vs-ienumerator-in-C-Sharp/
+
+Cluster index and noncluster index
+
+
+Enitiy framework stosuje transakcje dlatego jeżeli mamy np. dwa inserty i savechanges to jeżeli pierwszy się nie uda to nie uda się nic
+
+
+https://it-academy.pl/poziomy-typy-testow/
+
+https://blogprogramisty.net/pare-przykladow-zagadek-kodowych-w-c/
