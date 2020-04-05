@@ -1,0 +1,135 @@
+﻿js 
+https://www.google.com/amp/s/rwbit.pl/pytania-js/amp/
+
+https://stormit.pl/pytania-rekrutacyjne-javascript/
+
+
+
+React optimization
+https://blog.bitsrc.io/5-recommended-tools-for-optimizing-performance-in-reactjs-29eb2a3ec46d
+
+
+
+With I as
+
+WITH CategoryTree (ID, Title, Level, ParentID) AS
+(
+   SELECT  r.ID, r.Title, 0 Level, r.ParentID
+   FROM Categories r
+   WHERE r.ParentID = 0
+
+   UNION ALL
+
+   SELECT c.ID, c.Title, p.Level + 1 AS Level, c.ParentID
+   FROM Categories c
+   INNER JOIN CategoryTree p
+      ON p.ID = c.ParentID
+)
+
+SELECT  ID,
+    REPLICATE('-----', Level) + Title AS Title,
+    ParentID
+FROM CategoryTree
+
+
+
+React portale służą do tego że możesz wygenerować kod ui zakotwiczają go w dowolnym miejscu DOM nie będącego jego parentem!
+
+
+
+React renderowanie jak zwraca null z komponentu to jest componentdidmount wywoływane a jak mamy wyżej zalogowanego to nie jest
+
+
+
+Acid solid sql w w3schools wzorce projektowe
+
+polimorfizmu, dziedziczeniai hermetyzacjiw
+
+
+Liskov substitution principle (Zasada podstawienia Liskov)
+Funkcje które używają wskaźników lub referencji do klas bazowych, muszą być w stanie używać również obiektów klas dziedziczących po klasach bazowych, bez dokładnej znajomości tych obiektów. 
+
+Krócej mówiąc, w miejsce typu bazowego, możesz podstawić dowolny typ klasy pochodnej i nie powinieneś utracić poprawnego działania.
+
+
+Methods factory odnosi się do tworzenia obiektów z tej samej rodziny bez pokazywania implementacji która może być tworzona w różny sposób
+
+Abstract factory pozwala na tworzenia skomplikowanych obiektów i powiązań między nimi
+
+
+Stack vs heap
+Iquerable vs ienumberable 
+Enumarable implementuje i zesrać enumerator
+  
+Sesia na serwerze a cookies na cliencie https://www.tutorialspoint.com/What-is-the-difference-between-session-and-cookies
+
+
+DES - jeden z najpopularniejszych symetrycznych algorytmów szyfrujących, używany między innymi przez rząd USA do szyfrowania ważnych wiadomości
+RSA - najpopularniejszy algorytm z kluczem publicznym oparty na liczbach pierwszych. Stosuje się go do szyfrowania oraz do podpisów cyfrowych
+DSA - algorytm szyfrujący wykorzystywany do podpisów cyfrowych
+MD5 - algorytm szyfrujący w jedną stronę - takiej wiadomości nie można odszyfrować, stosowany np. do szyfrowania haseł użytkowników. Zaszyfrowane hasło jest przechowywane w bazie. Weryfikacja użytkownika polega na zaszyfrowaniu podanego hasła i porównaniu go z hasłem przechowywanym w bazie
+SHA128 512
+
+Ienumberable vs enumerator 
+https://www.c-sharpcorner.com/UploadFile/219d4d/ienumerable-vs-ienumerator-in-C-Sharp/
+
+Cluster index and noncluster index
+
+
+Enitiy framework stosuje transakcje dlatego jeżeli mamy np. dwa inserty i savechanges to jeżeli pierwszy się nie uda to nie uda się nic
+
+
+https://it-academy.pl/poziomy-typy-testow/
+
+https://blogprogramisty.net/pare-przykladow-zagadek-kodowych-w-c/
+
+
+
+Visitor odseparowanie struktury obiektowej od algorytmu
+
+Bridge oddzielneinie abstrakcji obiektu od  implementacji
+
+Methods factory jest niezależny od implementacji i procesu tworzenia obiektow
+
+
+
+Interceptor c# event handler , delegaty
+
+
+
+
+Notatki o DDD z filmików
+
+Wzorce integracjne
+https://www.slideshare.net/mobile/WojciechOczkowski/apache-camel-62482178
+
+Architektura zorientowana na usługi (ang. service-oriented architecture, SOA) –
+
+Korporacyjna Magistrala Usług (ang. Enterprise Service Bus) - dodatkowa warstwa pośrednia w wielowarstwowej architekturze systemów informatycznych umożliwiająca zastosowanie koncepcji SOA (Architektura zorientowana na usługi) w środowisku korporacyjnym. Umożliwia dynamiczne przyłączanie i odłączanie usług wchodzących w skład korporacyjnego systemu informacyjnego. Wymiana wiadomości w różnych formatach soap rest stmp http
+
+PDF o wzorcach i tegracyjnych i cqrs
+
+
+Saas paas iaas 
+serverless - azure lambda skupienie na logice aplikacj
+
+Software as a service, platform, infrastruktura
+
+https://docs.microsoft.com/pl-pl/azure/storage/common/storage-decide-blobs-files-disks
+
+
+
+Azure service bus dziala jako serwis i zapamiętuje wiadomości do serwisów które są offline żeby je potem wysłać w przeciwieństwie do rabbit mq
+
+
+Gethashcode jest wyliczany tak samo jesteli jest tym samym obiektem w pamięci.
+Var a= new Car('super') hash 10876
+Car b = new Car('super') hash 937h90
+Car c = b hash 937h90
+https://youtu.be/9SyIVUXYCGk
+No po referencji leci to te samo miejsce w pamieci
+
+
+ENTERPRISE PATTERN CARDS:
+https://nanopdf.com/queue/enterprise-integration-patterns-flashcards_pdf?queue_id=-1&x=1586093053&z=ODkuNjQuMTYwLjIxMg==
+https://www.youtube.com/watch?v=Yz8HXTFMqcE&t=787s

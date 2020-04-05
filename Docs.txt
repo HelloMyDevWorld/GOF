@@ -1,8 +1,131 @@
-﻿
+﻿https://docs.microsoft.com/pl-pl/dotnet/csharp/programming-guide/types/boxing-and-unboxing
+Boxing unboxing
+boxing kopiuje wartosc zmienna ze (stack) do kopca (heap)  
+int a = 1;
+object o = a; // kopiowanie do heap
+
+
+
+https://www.online-project.pl/wspolbieznosc/
+
+Przy tego typu przetwarzaniu danych może dochodzić do wielu problemów:
+
+● Wycofanej modyfikacji (dirty reads)
+Dotyczy odczytu danych zmodyfikowanych przez innego użytkownika, które zostaną ponownie zmodyfikowane.
+● Utraconej modyfikacji (lost updates)
+Dotyczy modyfikacji danych, a następnie nadpisywania tych samych danych przez innego użytkownika.
+● Niepowtarzalnego odczytu (non-repeatable reads)
+Dotyczy kilkukrotnego odczytu tych samych zatwierdzonych danych, ale za każdym razem te dane są inne.
+● Fantomowego odczytu (phantoms)
+Dotyczy wierszy dodanych, które wcześniej w transakcji nie były dostępne, a następnie się pojawią.
+ 
+ 
+BLOKOWANIE
+ 
+          SZBD zapewnia kontrolę współbieżności poprzez odpowiednie szeregowanie transakcji, czyli harmonogramowanie w taki sposób, aby były one wykonywane wydajnie i nie zaburzały spójności bazy.
+Podstawową techniką, która jest wykorzystywana do tego celu, jest BLOKOWANIE na jednym z poziomów:
+● na poziomie wiersza
+● na poziomie strony
+● na poziomie tabeli
+● na poziomie zakresu.
+ 
+Rozróżniamy dwa podstawowe rodzaje blokad:
+
+● blokada do odczytu (blokada dzielona)
+proces uzyskuje dostęp do danych tylko z możliwością ich odczytu, nie może natomiast wprowadzać żadnych zmian
+● blokada do zapisu (blokada wyłączna)
+proces uzyskuje wyłączną możliwość odczytu i zapisu danych. Żaden inny proces nie może się do niego dostać.
+ 
+ 
+POZIOMY IZOLACJI
+ 
+          Ms SQL Server daje możliwość zmiany poziomów izolacji transakcji. Wpływają one na sposób blokowania danych.
+
+● READ UNCOMMITTED
+Transakcja Tran1 może odczytywać dane modyfikowane przez Tran2 jeszcze przed ich zatwierdzeniem.
+Przetwarzanie tego typu jest stosunkowo szybkie, ale mogą wystąpić problemy utraconej modyfikacji lub wycofanej modyfikacji.
+
+● READ COMMITTED
+Jest to ustawienie domyślne Ms SQL Server’a.
+Wprowadzane modyfikacje w transakcji Tran1 zakładają blokadę, która uniemożliwia przeglądanie danych w transakcji Tran2 do momentu zakończenia transakcji Tran1. Zapobiega to problemowi niepowtarzalnego odczytu.
+
+● REPEATABLE READ
+Transakcja Tran1 w czasie odczytu danych zakłada blokadę i utrzymuje ją do zakończenia transakcji.
+Opcja ta zapobiega wprowadzaniu zmian danych przez inne transakcje.
+Dzięki temu kilkakrotny odczyt daje takie same wyniki, natomiast do tabeli można dodawać i usuwać wiersze.
+
+● SERIALIZABLE
+Jest to najbardziej restrykcyjna opcja, która zakłada blokadę na cały zestaw wierszy.
+Do czasu zakończenia transakcji Tran1 nie można: ani modyfikować, ani dodawać, ani usuwać żadnych danych.
+Ten poziom izolacji zapewnia całkowitą bezbłędność współbieżnego działania transakcji, ale niestety wiąże się z obniżeniem wydajności przetwarzania danych.
+
+● SNAPSHOT
+Opcja ta zapisuje tzw. „migawki” danych, których transakcja będzie używała w kolejnych odniesieniach.
+Chroni ona przed wszystkimi wspomnianymi wcześniej konfliktami.
+Mechanizm ten działa na zasadzie wersjonowania wierszy.
+
+SPOSÓB OBSŁUGI BLOKAD
+ 
+1). Każda transakcja chcąc uzyskać dostęp do określonych danych, musi je najpierw zablokować do odczytu lub do zapisu.
+2). SZBD sprawdza, czy dany element jest już zwolniony przez inną transakcję, i jeśli tak, to nowa transakcja może uzyskać blokadę, natomiast jeżeli nie, to musi zaczekać na odblokowanie zasobu.
+3). Transakcja trzyma blokadę do chwili zakończenia transakcji.
+
+
+
+
+Na poziomie połączenia z serwerem SQL można zadeklarować tzw. Transaction Isolation Level. Zależnie od wybranego poziomu transakcje dokonują blokad przy odczycie rekordów lub nie i czytając uwzględniają albo ignorują inne nałożone na rekordy blokady.
+
+Najsłabszym poziomem izolacji transakcji jest READ UNCOMMITTED. Jeżeli w swoim skrypcie na początku zapiszesz:
+
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+GO
+to twoje SELECT-y będą widziały dane zapisane przez inne jeszcze niezakończone transakcje. Jeżeli pracowałbyś na domyślnym poziomie izolacji transakcji READ COMMITTED, to twój SELECT zatrzyma się o ile będzie chciał przeczytać rekord zmodyfikowany przez inną nie zatwierdzoną transakcję.
+
+Bardzo podobnie działa query hint NOLOCK. On również pozwala na odczytanie niezatwierdzonych zmian.
+
+Jaka jest wobec tego różnica między NOLOCK, a izolacją READ UNCOMMITTED?
+
+Otóż jeżeli użyłeś poziomu izolacji READ UNCOMMITTED, to WSZYSTKIE od tej powy wykonywane odczyty z bazy danych nie używają blokad i czytają niezatwierdzone cudze transakcje. Aby zakończyć takie działanie musisz się przełączyć na inny poziom transakcji izolacji, co zresztą nie jest trudne bo wystarczy wydać komendę:
+
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+GO
+Jeżeli wolałbyś pracować cały czas na innym poziomie izolacji, ale na chwilę w jednym zapytaniu skorzystać z „brudnego odczytu” niezatwierdzonych transakcji, możesz użyć query hint do tej transakcji:
+
+SELECT *
+       FROM Production.Product as p WITH (NOLOCK)
+           JOIN Production.ProductReview pr
+          ON pr.productid=p.ProductID
+Zauważ, że w powyższym zapytaniu odczyt niezakończonych transakcji dotyczy tylko jednej (!) tabeli. Gdybyś użył transaction  isolation level READ UNCOMMITTED, to brudny odczyt dotyczył by obu tabel.
+
+A ogólnie rzecz biorąc, zawsze lepiej poszukać, dlaczego dochodzi do blokad i usunąć ich przyczynę niż stosować brak blokad.
+
+
+
+
+
+
+
+
+
+
+
+
+
+SERIALIZABLE 
+https://en.wikipedia.org/wiki/Isolation_(database_systems)
+https://mydbops.wordpress.com/2018/06/22/back-to-basics-isolation-levels-in-mysql/
+OSLONY:
+
 read uncommitted – jedna transakcja może odczytywać wiersze, na których działają inne transakcje (najniższy poziom izolacji)
 read committed – transakcja może odczytywać tylko wiersze zapisane
 repeatable read – transakcja nie może czytać ani zapisywać na wierszach odczytywanych lub zapisywanych w innej transakcji
 serializable (szeregowalne) – wyniki współbieżnie realizowanych zapytań muszą być identyczne z wynikami tych samych zapytań realizowanych szeregowo (pełna izolacja).
+
+Snapshot isolation is similar to Serializable isolation. The difference is Snapshot does not hold lock on table during the transaction so table can be modified in other sessions
+Snapshot isolation maintains versioning in Tempdb for old data in case of any data modification occurs in other sessions then existing transaction displays the old data from Tempdb.
+
+
+PROBLEMY:
 
 Brudny odczyt
 (ang.Dirty read /
@@ -101,3 +224,77 @@ Enitiy framework stosuje transakcje dlatego jeżeli mamy np. dwa inserty i savec
 https://it-academy.pl/poziomy-typy-testow/
 
 https://blogprogramisty.net/pare-przykladow-zagadek-kodowych-w-c/
+
+cookies https://web.dev/samesite-cookies-explained/
+
+DO webstorage mozna dostac sie tylko z poziomu domeny dlatego JWT jest bezpieczne jak i cookie httponly
+
+FOR GEEKD caly portal
+https://www.geeksforgeeks.org/http-headers-proxy-authenticate/
+
+
+ETAGS
+https://www.youtube.com/watch?v=TgZnpp5wJWU
+
+SAMEORIGIN
+https://www.youtube.com/watch?v=aUF2QCEudPo&list=PLQnljOFTspQU6zO0drAYHFtkkyfNJw1IO&index=32
+
+HTTP COOKIE
+https://www.youtube.com/watch?v=sovAIX4doOE&list=PLQnljOFTspQU6zO0drAYHFtkkyfNJw1IO&index=11
+
+
+CSRF - https://www.youtube.com/watch?v=eWEgUcHPle0
+
+
+https://mega.nz/#F!PwsnBLBL!waJb3lHFiR9444GFpuokIg
+https://goalkicker.com/
+
+
+https://www.impan.pl/~kz/DB/KZ_BD_w09.pdf
+http://bazy.rzeszow.pl/klasy/klasa3bazy/Transakcje.pdf
+http://www.besttechtools.com/articles/article/sql-server-isolation-levels-by-example
+
+
+Zagatkowo
+https://blogprogramisty.net/pare-przykladow-zagadek-kodowych-w-c/
+https://blog.soltysiak.it/pl/2016/08/10-najpopularniejszych-algorytmicznych-pytan-rekrutacyjnych/
+
+
+Algorytmy 
+https://mega.nz/#F!PwsnBLBL!waJb3lHFiR9444GFpuokIg
+
+
+WZORCE+SOLID+SQL
+https://stormit.pl/pytania-rekrutacyjne-sql/
+
+SQL opytmalizajce
+https://pl.seequality.net/sql_server_key_rid-lookup-co-to-jest/
+
+
+CREATE NONCLUSTERED INDEX [IX_LastNameFirstName] ON [dbo].[DimCustomer]
+(
+	[LastName] ASC,
+	[FirstName] ASC
+)
+Jak widać nie było potrzeby “sięgania” do tabeli źródłowej. Stworzony przez nas indeks będzie bardzo efektywny w przypadku gdy wyszukujemy informacje po kolumnie LastName lub po LastName i FirstName. Jeżeli chcemy zawrzeć kolumnę w indeksie jednakże wiemy, że nie będzie ona używana w klauzuli WHERE to lepszym wyjściem będzie jej zawarcie na poziomie liści indeksu używając słowa kluczowego INCLUDE. Kolumny zawarte w indeksie przy użyciu INCLUDE nie będą zawarte na poziomach innych niż liście czyli nie będą częścią klucza – dzięki temu nasz indeks będzie mniejszy. Analogiczna do powyższego składnia ze słowem kluczowym INCLUDE została zawarta poniżej:
+
+CREATE NONCLUSTERED INDEX [IX_LastNameFirstName] ON [dbo].[DimCustomer]
+(
+	[LastName] ASC
+)
+INCLUDE
+(FirstName)
+WITH (DROP_EXISTING=ON)
+GO
+
+Jeżeli coś jest w INCLUDE to nie da się po tym wyszukiwać wartości – struktura ta jest potrzebna tylko po to aby tworzyć zapytania pokrywające. Do wyszukiwania wartości wykorzystywane są jedynie te wartości, które są zawarte w kluczu, a i to nie zawsze gwarantuje wykorzystania indeksu.
+
+
+
+Garbange Collector 
+
+Generacja 0. Jest to najmłodsze pokolenie i zawiera krótkotrwałe przedmioty. Przykładem krótkotrwałego obiektu jest zmienna tymczasowa. Wyrzucanie elementów bezużytecznych występuje najczęściej w tej generacji.
+Nowo przydzielone obiekty tworzą nową generację obiektów i są niejawnie generacji 0 kolekcji. Jednak jeśli są one duże obiekty, idą na stercie dużych obiektów w kolekcji generacji 2.
+Większość obiektów są odzyskiwane do wyrzucania elementów bezużytecznych w generacji 0 i nie przetrwać do następnej generacji.
+Generacja 1. Ta generacja zawiera obiekty krótkotrwałe i służy jako bufor między krótkotrwałymi obiektami i długowiecznymi obiektami.
+Generacja 2. Ta generacja zawiera obiekty długowieczne. Przykładem obiektu długotrwałego jest obiekt w aplikacji serwera, który zawiera dane statyczne, które są aktywne przez czas trwania procesu.

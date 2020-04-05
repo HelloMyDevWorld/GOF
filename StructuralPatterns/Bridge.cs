@@ -22,7 +22,7 @@ namespace GOF
 
                 ab.Implementor = new ConcreteImplementorA();
                 ab.Operation();
-
+                   
                 ab.Implementor = new ConcreteImplementorB();
                 ab.Operation();
 

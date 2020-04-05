@@ -3,6 +3,8 @@ using System.Collections.Generic;
 
 namespace GOF
 {
+
+    // EVENT HANDER I DELEGATE += subskrypowanie sie do nich przez metohdy
     /*
      * Używany jest do powiadamiania zainteresowanych obiektów o zmianie stanu pewnego innego obiektu.
      *
